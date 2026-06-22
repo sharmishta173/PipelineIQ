@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.env
+pipelineiq.db
+.venv/
+venv/
