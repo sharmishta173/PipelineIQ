@@ -1,18 +1,40 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from services.github_service import build_comment
 from app.database import SessionLocal
 from app.models import PipelineRun
 from app.schemas import FailureRequest
-
+from routes.metrics import (
+    pipeline_runs,
+    pipeline_failures
+)
 from services.ai_service import analyze_log
 from services.github_service import (
     build_comment,
     post_commit_comment
 )
+from services.slack_service import send_slack_alert
+from app.config import SLACK_WEBHOOK_URL
+
 
 app = FastAPI(
     title="PipelineIQ"
 )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+from routes.health import router as health_router
+app.include_router(health_router)
+
+from routes.metrics import router as metrics_router
+
+app.include_router(metrics_router)
 from services.github_service import (
     build_comment,
     post_commit_comment
@@ -59,9 +81,7 @@ def get_stats():
 
     db = SessionLocal()
 
-    runs = db.query(
-        PipelineRun
-    ).all()
+    runs = db.query(PipelineRun).all()
 
     total = len(runs)
 
@@ -70,9 +90,16 @@ def get_stats():
         if r.status == "FAILED"
     ])
 
+    success_rate = (
+        ((total - failed) / total) * 100
+        if total > 0
+        else 0
+    )
+
     return {
         "total_runs": total,
-        "failed_runs": failed
+        "failed_runs": failed,
+        "success_rate": round(success_rate, 2)
     }
 
 
@@ -87,7 +114,10 @@ def root():
 @app.post("/analyze-failure")
 def analyze_failure(
         data: FailureRequest):
-
+    
+    pipeline_runs.inc()
+    pipeline_failures.inc()
+    
     result = analyze_log(
         data.failure_log
     )
@@ -107,6 +137,34 @@ def analyze_failure(
     db.add(run)
     db.commit()
     db.close()
+
+    send_slack_alert(
+    f"""
+
+    🚨 Pipeline Failure
+
+    Run ID: {data.run_id}
+
+    Category: {result['category']}
+
+    Root Cause:
+    {result['root_cause']}
+
+    Fix:
+    {result['fix']}
+
+    Confidence:
+    {result['confidence']}
+
+    Commit:
+    {data.commit_sha}
+    """,
+    SLACK_WEBHOOK_URL
+    )
+
+    db.close()
+
+    return result
     
     if data.commit_sha:
      comment = build_comment(result)
