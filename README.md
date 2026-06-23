@@ -9,7 +9,7 @@ The project uses a Python FastAPI backend with SQLite persistence, a React + Vit
 ## Key Features
 
 - Automated ingestion of CI/CD failure logs
-- Rule-based AI failure analysis and categorization
+- Rule-based failure analysis and categorization
 - Root cause identification, remediation suggestion, and confidence scoring
 - Slack alerting for pipeline incidents
 - Historical pipeline run storage and dashboard visualization
@@ -229,7 +229,7 @@ It simulates a failure, captures the failed step outcome, and sends the failure 
 
 ### Azure DevOps Pipeline
 
-A sample Azure DevOps pipeline is defined in `azure-pipelines.yml`.
+A Azure DevOps pipeline is defined in `azure-pipelines.yml`.
 This pipeline installs dependencies, simulates a failure condition, and is structured to provide a repeatable Azure-based CI/CD integration path for PipelineIQ.
 
 ## Docker Deployment
