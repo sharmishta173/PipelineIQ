@@ -23,10 +23,12 @@ jobs:
           pip install pytest
 
       - name: Simulate Failure
+        id: failstep
+        continue-on-error: true
         run: |
           python -c "import pandas123"
 
       - name: Notify PipelineIQ
-        if: failure()
+        if: steps.failstep.outcome == 'failure'
         run: |
           curl -X POST "https://irrefragably-condolatory-sage.ngrok-free.dev/analyze-failure" -H "Content-Type: application/json" -d "{\"run_id\":\"github-actions\",\"failure_log\":\"ModuleNotFoundError: No module named pandas123\"}"
