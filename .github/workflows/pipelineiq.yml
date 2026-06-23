@@ -1,36 +1,32 @@
 name: PipelineIQ CI
 
 on:
-push:
-branches:
-- main
+  push:
+    branches:
+      - main
 
 jobs:
-build:
-runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-```
-steps:
-  - name: Checkout Code
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-  - name: Setup Python
-    uses: actions/setup-python@v5
-    with:
-      python-version: "3.12"
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-  - name: Install Dependencies
-    run: |
-      pip install pytest
+      - name: Install Dependencies
+        run: |
+          pip install pytest
 
-  - name: Simulate Failure
-    run: |
-      python -c "import pandas123"
+      - name: Simulate Failure
+        run: |
+          python -c "import pandas123"
 
-  - name: Notify PipelineIQ
-    if: failure()
-    run: |
-      curl -X POST "https://irrefragably-condolatory-sage.ngrok-free.dev/analyze-failure" \
-      -H "Content-Type: application/json" \
-      -d "{\"run_id\":\"github-actions\",\"failure_log\":\"ModuleNotFoundError: No module named pandas123\"}"
-```
+      - name: Notify PipelineIQ
+        if: failure()
+        run: |
+          curl -X POST "https://irrefragably-condolatory-sage.ngrok-free.dev/analyze-failure" -H "Content-Type: application/json" -d "{\"run_id\":\"github-actions\",\"failure_log\":\"ModuleNotFoundError: No module named pandas123\"}"
