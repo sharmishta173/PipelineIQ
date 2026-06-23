@@ -35,11 +35,8 @@ def post_commit_comment(
     )
 
     headers = {
-        "Authorization":
-        f"Bearer {GITHUB_TOKEN}",
-
-        "Accept":
-        "application/vnd.github+json"
+        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github+json"
     }
 
     response = requests.post(
@@ -50,4 +47,7 @@ def post_commit_comment(
         }
     )
 
-    return response.json()
+    return {
+        "status_code": response.status_code,
+        "response": response.json()
+    }

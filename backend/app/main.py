@@ -9,6 +9,31 @@ from services.ai_service import analyze_log
 app = FastAPI(
     title="PipelineIQ"
 )
+from services.github_service import (
+    build_comment,
+    post_commit_comment
+)
+
+@app.get("/post-test-comment")
+def post_test_comment():
+
+    result = {
+        "category": "Dependency Error",
+        "root_cause": "Missing Python dependency",
+        "fix": "Install pandas",
+        "confidence": "95%"
+    }
+
+    comment = build_comment(result)
+
+    response = post_commit_comment(
+        owner="sharmishta173",
+        repo="PipelineIQ",
+        commit_sha="1dc3a94ac83acc4d723fac74de5f220a91989b88",
+        comment_text=comment
+    )
+
+    return response
 
 @app.get("/test-comment")
 def test_comment():
