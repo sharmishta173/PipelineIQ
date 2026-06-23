@@ -100,7 +100,8 @@ def analyze_failure(
         category=result["category"],
         confidence=result["confidence"],
         failure_log=data.failure_log,
-        ai_suggestion=result["fix"]
+        ai_suggestion=result["fix"],
+        commit_sha=data.commit_sha
     )
 
     db.add(run)

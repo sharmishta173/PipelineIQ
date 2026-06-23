@@ -2,14 +2,11 @@ from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import Text
-from sqlalchemy.orm import declarative_base
 from sqlalchemy import DateTime
-from datetime import datetime
 
-created_at = Column(
-    DateTime,
-    default=datetime.utcnow
-)
+from sqlalchemy.orm import declarative_base
+
+from datetime import datetime
 
 Base = declarative_base()
 
@@ -35,3 +32,13 @@ class PipelineRun(Base):
     confidence = Column(String)
 
     ai_suggestion = Column(Text)
+
+    commit_sha = Column(
+        String,
+        nullable=True
+    )
+
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow
+    )
