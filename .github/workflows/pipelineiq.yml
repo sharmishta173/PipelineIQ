@@ -31,4 +31,6 @@ jobs:
       - name: Notify PipelineIQ
         if: steps.failstep.outcome == 'failure'
         run: |
-          curl -X POST "https://irrefragably-condolatory-sage.ngrok-free.dev/analyze-failure" -H "Content-Type: application/json" -d "{\"run_id\":\"github-actions\",\"failure_log\":\"ModuleNotFoundError: No module named pandas123\"}"
+          curl -X POST "https://irrefragably-condolatory-sage.ngrok-free.dev/analyze-failure" 
+          -H "Content-Type: application/json" 
+          -d "{\"run_id\":\"github-actions\",\"failure_log\":\"ModuleNotFoundError: No module named pandas123\"}"

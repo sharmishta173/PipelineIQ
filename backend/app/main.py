@@ -5,6 +5,10 @@ from app.models import PipelineRun
 from app.schemas import FailureRequest
 
 from services.ai_service import analyze_log
+from services.github_service import (
+    build_comment,
+    post_commit_comment
+)
 
 app = FastAPI(
     title="PipelineIQ"
@@ -102,6 +106,16 @@ def analyze_failure(
     db.add(run)
     db.commit()
     db.close()
+    
+    if data.commit_sha:
+     comment = build_comment(result)
+
+     post_commit_comment(
+      owner="sharmishta173",
+      repo="PipelineIQ",
+      commit_sha=data.commit_sha,
+      comment_text=comment
+    )
 
     return result
 
