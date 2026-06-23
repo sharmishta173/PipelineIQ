@@ -7,12 +7,10 @@ branches:
 
 jobs:
 build:
-
-```
 runs-on: ubuntu-latest
 
+```
 steps:
-
   - name: Checkout Code
     uses: actions/checkout@v4
 
@@ -32,11 +30,7 @@ steps:
   - name: Notify PipelineIQ
     if: failure()
     run: |
-      curl -X POST \
-      https://irrefragably-condolatory-sage.ngrok-free.dev/analyze-failure \
+      curl -X POST "https://irrefragably-condolatory-sage.ngrok-free.dev/analyze-failure" \
       -H "Content-Type: application/json" \
-      -d '{
-            "run_id":"github-actions",
-            "failure_log":"ModuleNotFoundError: No module named pandas123"
-          }'
+      -d "{\"run_id\":\"github-actions\",\"failure_log\":\"ModuleNotFoundError: No module named pandas123\"}"
 ```
